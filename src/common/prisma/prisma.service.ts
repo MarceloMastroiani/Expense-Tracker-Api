@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'generated/prisma/client';
-
 import { envs } from 'src/common/configs/envs';
 
 @Injectable()
@@ -15,7 +14,9 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
-    const adapter = new PrismaPg({ url: envs.databaseUrl });
+    const adapter = new PrismaPg({
+      connectionString: envs.databaseUrl,
+    });
     super({ adapter });
   }
 
@@ -28,3 +29,15 @@ export class PrismaService
     Logger.log('Database disconnected');
   }
 }
+
+/* 
+// Crear el Pool de PostgreSQL
+    const pool = new Pool({
+      connectionString: envs.databaseUrl,
+    });
+
+    // Pasar el pool al adaptador (no un objeto con url)
+    const adapter = new PrismaPg(pool);
+
+    super({ adapter }); 
+    */

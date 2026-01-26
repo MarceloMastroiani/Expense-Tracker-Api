@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { ExpenseService } from './expense.service';
-import { CreateExpenseDto } from './dto/create-expense.dto';
-import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { CreateExpenseDto, UpdateExpenseDto } from './dto';
 
 @Controller('expense')
 export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) {}
 
+  // CREATE EXPENSE
   @Post()
   create(@Body() createExpenseDto: CreateExpenseDto) {
     return this.expenseService.create(createExpenseDto);
   }
 
+  // GET ALL EXPENSES WITHOUT DELETEDAT
   @Get()
   findAll() {
     return this.expenseService.findAll();
   }
 
+  // GET ALL EXPENSES WITH DELETEDAT
+  @Get('soft-deleted')
+  findAllSoftDeleted() {
+    return this.expenseService.findAllSoftDeleted();
+  }
+
+  // GET ONE EXPENSE WITHOUT DELETEDAT
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.expenseService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.expenseService.findOne(id);
   }
 
+  // UPDATE EXPENSE
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
-    return this.expenseService.update(+id, updateExpenseDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateExpenseDto: UpdateExpenseDto,
+  ) {
+    const { id: _, ...rest } = updateExpenseDto;
+    return this.expenseService.update(id, rest);
   }
 
+  // DELETE EXPENSE, RETRIEVE THE DATA THAT HAS DATA IN DELETEDAT
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.expenseService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.expenseService.remove(id);
   }
 }

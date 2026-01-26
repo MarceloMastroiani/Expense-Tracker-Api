@@ -19,55 +19,54 @@ enum TaskType {
   INCOME
 }
 
-model User {
-  id String @id @default(uuid())
+// model User {
+//   id String @id @default(uuid())
 
-  name     String
-  email    String @unique
-  password String
+//   name     String
+//   email    String @unique
+//   password String
 
-  expenses   Expense[]
-  categories Category[]
+//   expenses   Expense[]
+//   categories Category[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  @@map("users")
-}
+//   @@map("users")
+// }
 
 model Expense {
   id String @id @default(uuid())
 
-  title       String
-  description String
-  amount      Decimal  @default(0)
-  type        TaskType
-  date        DateTime @default(now())
-  balance     Decimal  @default(0)
+  title  String
+  amount Decimal  @default(0)
+  type   TaskType
+  date   DateTime @default(now())
 
-  user   User   @relation(fields: [userId], references: [id])
+  // user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
+  // category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   @@map("expenses")
 }
 
-model Category {
-  id String @id @default(uuid())
+// model Category {
+//   id Int @id @default(autoincrement())
 
-  name String
+//   name String
 
-  user     User      @relation(fields: [userId], references: [id])
-  userId   String
-  expenses Expense[]
+//   user   User   @relation(fields: [userId], references: [id])
+//   userId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+//   expenses  Expense[]
 
-  @@map("categories")
-}
+//   @@map("categories")
+// }
