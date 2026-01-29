@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto';
@@ -12,16 +12,16 @@ export class ExpenseRepository extends PrismaService {
     const newExpense = await this.expense.create({
       data: {
         title: title,
-        amount: amount,
+        amount: Number(amount),
         type: type,
         userId: 'test',
-        categoryId: 0,
+        categoryId: 1,
         deletedAt: null,
       },
     });
 
     return {
-      data: newExpense,
+      data: { ...newExpense, amount: newExpense.amount.toNumber() },
       message: 'Expense created successfully',
     };
   }
@@ -33,7 +33,11 @@ export class ExpenseRepository extends PrismaService {
         deletedAt: null,
       },
     });
-    return { data: expenses };
+    return {
+      data: expenses.map((expense) => {
+        return { ...expense, amount: expense.amount.toNumber() };
+      }),
+    };
   }
 
   // ======== READ SOFT DELETED ======== //
@@ -45,28 +49,47 @@ export class ExpenseRepository extends PrismaService {
         },
       },
     });
-    return { data: expenses };
+    return {
+      data: expenses.map((expense) => {
+        return { ...expense, amount: expense.amount.toNumber() };
+      }),
+    };
   }
 
   // ======== READ ONE ======== //
   async findOneExpense(id: string) {
-    const expense = await this.expense.findUnique({
+    const expenses = await this.expense.findUnique({
       where: {
         id: id,
       },
     });
-    return { data: expense };
+    return {
+      data: expenses
+        ? {
+            ...expenses,
+            amount: expenses.amount.toNumber(),
+          }
+        : null,
+    };
   }
 
   // ======== UPDATE ======== //
   async updateExpense(id: string, updateExpenseDto: UpdateExpenseDto) {
-    const { id: _, ...rest } = updateExpenseDto;
-    return this.expense.update({
+    const updatedExpense = await this.expense.update({
       where: {
         id: id,
       },
-      data: rest,
+      data: {
+        ...updateExpenseDto,
+      },
     });
+    return {
+      data: {
+        ...updatedExpense,
+        amount: updatedExpense.amount.toNumber(),
+      },
+      message: 'Expense updated successfully',
+    };
   }
 
   // ======== SOFT DELETE ======== //

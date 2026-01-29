@@ -29,7 +29,7 @@ export class ExpenseController {
 
   // GET ALL EXPENSES WITH DELETEDAT
   @Get('soft-deleted')
-  findAllSoftDeleted() {
+  async findAllSoftDeleted() {
     return this.expenseService.findAllSoftDeleted();
   }
 
@@ -45,8 +45,7 @@ export class ExpenseController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
   ) {
-    const { id: _, ...rest } = updateExpenseDto;
-    return this.expenseService.update(id, rest);
+    return this.expenseService.update(id, updateExpenseDto);
   }
 
   // DELETE EXPENSE, RETRIEVE THE DATA THAT HAS DATA IN DELETEDAT

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpenseRepository } from './expense.repository';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { UpdateExpenseDto } from './dto';
 // import { UpdateExpenseDto } from './dto/update-expense.dto';
 
 @Injectable()
@@ -11,22 +13,50 @@ export class ExpenseService {
     return this.expenseRepository.createExpense(createExpenseDto);
   }
 
+  // GET ALL EXPENSES
   findAll() {
     return this.expenseRepository.findAllExpenses();
   }
 
-  findAllSoftDeleted() {
-    return this.expenseRepository.findAllSoftDeletedExpenses();
+  // GET ALL SOFT DELETED EXPENSES
+  async findAllSoftDeleted() {
+    const getAllSoftDeleted =
+      await this.expenseRepository.findAllSoftDeletedExpenses();
+    if (getAllSoftDeleted.data.length === 0) {
+      throw new HttpException('No expenses found', HttpStatus.NOT_FOUND);
+    }
+
+    return getAllSoftDeleted;
   }
 
-  findOne(id: string) {
-    return this.expenseRepository.findOneExpense(id);
+  // GET ONE EXPENSE
+  async findOne(id: string) {
+    return await this.expenseRepository.findOneExpense(id);
   }
 
-  update(id: string, updateExpenseDto: any) {
-    return this.expenseRepository.updateExpense(id, updateExpenseDto);
+  // UPDATE EXPENSE | VALIDATE ID | VALIDATE DATA DTO
+  async update(id: string, updateExpenseDto: UpdateExpenseDto) {
+    // Find id expense and verify if exists
+
+    const validateExpenseId = await this.findOne(id);
+
+    if (validateExpenseId.data === null) {
+      throw new HttpException('Expense not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (Object.keys(updateExpenseDto).length === 0) {
+      throw new HttpException('No data to update', HttpStatus.BAD_REQUEST);
+    }
+
+    const updateExpense = await this.expenseRepository.updateExpense(
+      id,
+      updateExpenseDto,
+    );
+
+    return updateExpense;
   }
 
+  // SOFT DELETE EXPENSE
   remove(id: string) {
     return this.expenseRepository.removeUpdateExpense(id);
   }
