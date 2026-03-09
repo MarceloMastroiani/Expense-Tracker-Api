@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hashPassword } from 'src/common/helpers/hash-password.utils';
@@ -10,17 +10,24 @@ export class UserRepository extends PrismaService {
 
     const passwordHash = await hashPassword(password);
 
-    const newUser = await this.user.create({
-      data: {
-        name: name,
-        email: email,
-        password: passwordHash,
-      },
-    });
+    try {
+      const newUser = await this.user.create({
+        data: {
+          name: name,
+          email: email,
+          password: passwordHash,
+        },
+      });
 
-    const { password: _, ...userWithoutPassword } = newUser;
+      const { password: _, ...userWithoutPassword } = newUser;
 
-    return userWithoutPassword;
+      return userWithoutPassword;
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('User or email already exists');
+      }
+      throw error;
+    }
   }
 
   async findAllUsers() {
@@ -39,6 +46,14 @@ export class UserRepository extends PrismaService {
     return this.user.findFirst({
       where: {
         name: username,
+      },
+    });
+  }
+
+  async findOneUserByEmail(email: string) {
+    return this.user.findFirst({
+      where: {
+        email,
       },
     });
   }

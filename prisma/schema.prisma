@@ -22,7 +22,7 @@ enum TaskType {
 model User {
   id String @id @default(uuid())
 
-  name     String
+  name     String @unique
   email    String @unique
   password String
 

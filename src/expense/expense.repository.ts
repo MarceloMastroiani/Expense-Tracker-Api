@@ -2,10 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ExpenseRepository extends PrismaService {
+  // TODO: DELETE ALL ERROR HANDLING
+
   // ======== CREATE ======== //
   async createExpense(userId: string, createExpenseDto: CreateExpenseDto) {
     const { title, amount, type, categoryId } = createExpenseDto;
