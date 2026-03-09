@@ -1,9 +1,3 @@
-// @prefix eslint-config
-// @description
-/* eslint-disable */
-
-// NOMBRE DE ARCHIVO: eslint.config.mjs
-//npm install -D eslint @eslint/js eslint-plugin-prettier typescript-eslint globals
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';

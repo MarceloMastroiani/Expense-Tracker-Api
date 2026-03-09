@@ -9,8 +9,9 @@ import { UpdateExpenseDto } from './dto';
 export class ExpenseService {
   constructor(private readonly expenseRepository: ExpenseRepository) {}
 
-  create(createExpenseDto: CreateExpenseDto) {
-    return this.expenseRepository.createExpense(createExpenseDto);
+  // CREATE EXPENSE
+  create(userId: string, createExpenseDto: CreateExpenseDto) {
+    return this.expenseRepository.createExpense(userId, createExpenseDto);
   }
 
   // GET ALL EXPENSES
@@ -18,10 +19,11 @@ export class ExpenseService {
     return this.expenseRepository.findAllExpenses();
   }
 
-  // GET ALL SOFT DELETED EXPENSES
+  // GET ALL SOFT DELETED EXPENSES | VALIDATE IF EXISTS
   async findAllSoftDeleted() {
     const getAllSoftDeleted =
       await this.expenseRepository.findAllSoftDeletedExpenses();
+
     if (getAllSoftDeleted.data.length === 0) {
       throw new HttpException('No expenses found', HttpStatus.NOT_FOUND);
     }
@@ -36,8 +38,6 @@ export class ExpenseService {
 
   // UPDATE EXPENSE | VALIDATE ID | VALIDATE DATA DTO
   async update(id: string, updateExpenseDto: UpdateExpenseDto) {
-    // Find id expense and verify if exists
-
     const validateExpenseId = await this.findOne(id);
 
     if (validateExpenseId.data === null) {

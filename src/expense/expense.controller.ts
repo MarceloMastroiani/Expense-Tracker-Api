@@ -16,9 +16,12 @@ export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) {}
 
   // CREATE EXPENSE
-  @Post()
-  create(@Body() createExpenseDto: CreateExpenseDto) {
-    return this.expenseService.create(createExpenseDto);
+  @Post(':userId')
+  create(
+    @Param('userId') userId: string,
+    @Body() createExpenseDto: CreateExpenseDto,
+  ) {
+    return this.expenseService.create(userId, createExpenseDto);
   }
 
   // GET ALL EXPENSES WITHOUT DELETEDAT

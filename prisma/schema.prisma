@@ -19,21 +19,21 @@ enum TaskType {
   INCOME
 }
 
-// model User {
-//   id String @id @default(uuid())
+model User {
+  id String @id @default(uuid())
 
-//   name     String
-//   email    String @unique
-//   password String
+  name     String
+  email    String @unique
+  password String
 
-//   expenses   Expense[]
-//   categories Category[]
+  expenses   Expense[]
+  categories Category[]
 
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-//   @@map("users")
-// }
+  @@map("users")
+}
 
 model Expense {
   id String @id @default(uuid())
@@ -43,30 +43,34 @@ model Expense {
   type   TaskType
   date   DateTime @default(now())
 
-  // user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  // category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+  category Category @relation(fields: [categoryId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
   @@map("expenses")
 }
 
-// model Category {
-//   id Int @id @default(autoincrement())
+model Category {
+  id Int @id @default(autoincrement())
 
-//   name String
+  name  String
+  color String @default("#000000")
 
-//   user   User   @relation(fields: [userId], references: [id])
-//   userId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-//   createdAt DateTime  @default(now())
-//   updatedAt DateTime  @updatedAt
-//   expenses  Expense[]
+  expenses Expense[]
 
-//   @@map("categories")
-// }
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("categories")
+}

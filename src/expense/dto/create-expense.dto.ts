@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
   MinLength,
 } from 'class-validator';
@@ -27,6 +28,10 @@ export class CreateExpenseDto {
 
   @IsOptional()
   deletedAt?: null;
+
+  @IsNumber()
+  @IsOptional()
+  categoryId?: number;
 }
 
 //PARA USERS:

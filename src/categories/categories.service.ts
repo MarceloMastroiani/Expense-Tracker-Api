@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoriesRepository } from './categories.repository';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(private readonly categoriesRepository: CategoriesRepository) {}
+
+  // ======== CREATE ======== //
+  async create(userId: string, createCategoryDto: CreateCategoryDto) {
+    return await this.categoriesRepository.createCategory(
+      userId,
+      createCategoryDto,
+    );
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  // ======== READ ======== //
+  async findAll() {
+    return await this.categoriesRepository.findAllCategories();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  // ======== READ ONE ======== //
+  async findOne(id: number) {
+    return await this.categoriesRepository.findOneCategory(id);
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  // ======== READ BY USER ID ======== //
+  async findAllByUserId(userId: string) {
+    return await this.categoriesRepository.findAllCategoriesByUserId(userId);
+  }
+
+  // ======== READ SOFT DELETED ======== //
+  async findAllSoftDeleted() {
+    return await this.categoriesRepository.findAllSoftDeletedCategories();
+  }
+
+  // ======== UPDATE ======== //
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
     return `This action updates a #${id} category`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  // ======== SOFT DELETE ======== //
+  async softDelete(id: number) {
+    return await this.categoriesRepository.softDelete(id);
   }
 }

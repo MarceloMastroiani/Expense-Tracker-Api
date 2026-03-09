@@ -6,7 +6,13 @@ import { ExpenseModule } from './expense/expense.module';
 import { CategoriesModule } from './categories/categories.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, AuthModule, ExpenseModule, CategoriesModule],
+  imports: [
+    UsersModule,
+    PrismaModule,
+    AuthModule,
+    ExpenseModule,
+    CategoriesModule,
+  ],
   controllers: [],
   providers: [],
 })
